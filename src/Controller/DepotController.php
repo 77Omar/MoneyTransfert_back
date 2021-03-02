@@ -29,7 +29,6 @@ class DepotController extends AbstractController
             $depotObjet->getCompte()->setSolde($depotTab['montantDepot']+$recupSolde);
             $user=$storage->getToken()->getUser();
             $depotObjet->setUser($user);
-
             $manager->persist($depotObjet);
             $manager->flush();
       return $this->json('Depot effectué avc succes',200);

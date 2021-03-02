@@ -22,7 +22,6 @@ class TransactionsController extends AbstractController
         $chars = '0123456789';
         $string = '';
         for($i=0; $i<9; $i++){
-
             $string .= $chars[rand(0, strlen($chars)-1)];
             if ($i==2 || $i==5){
                 $string.='-';
@@ -95,6 +94,7 @@ class TransactionsController extends AbstractController
         $data = $request->getContent();
         $dataTab = $serializer->decode($data,'json');
         $codes = $transactionsRepository->findOneBy(["code"=>$dataTab['code']]);
+        dd($codes);
         if($codes->getDateRetrait() != null){
           return $this->json('desolé la date du code est expiré',403);
         }

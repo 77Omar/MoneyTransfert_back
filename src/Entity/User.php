@@ -112,7 +112,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="boolean", nullable=false)
-     * @Groups ({"user:read","users:write","depot:read"})
+     * @Groups ({"user:read","users:write","depot:read","agence:write"})
      */
     private $archive=false;
 

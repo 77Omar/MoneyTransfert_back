@@ -49,7 +49,8 @@ class Compte
     private $numeroCompte;
 
     /**
-     * @Assert\GreaterThan(700000)
+     * @Assert\GreaterThan(700000),
+     * message="la valeur est initialisé à 700mille ou plus "
      * @ORM\Column(type="integer")
      * @Groups ({"compte:read","compte:write","agence:read","agence:write"})
      */
@@ -72,9 +73,14 @@ class Compte
     private $depots;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=true)
      */
     private $isArchived;
+
+    /**
+     * @ORM\OneToOne(targetEntity=Agence::class, mappedBy="compte", cascade={"persist", "remove"})
+     */
+    private $agence;
 
     public function __construct()
     {
@@ -191,6 +197,28 @@ class Compte
     public function setIsArchived(bool $isArchived): self
     {
         $this->isArchived = $isArchived;
+
+        return $this;
+    }
+
+    public function getAgence(): ?Agence
+    {
+        return $this->agence;
+    }
+
+    public function setAgence(?Agence $agence): self
+    {
+        // unset the owning side of the relation if necessary
+        if ($agence === null && $this->agence !== null) {
+            $this->agence->setCompte(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($agence !== null && $agence->getCompte() !== $this) {
+            $agence->setCompte($this);
+        }
+
+        $this->agence = $agence;
 
         return $this;
     }

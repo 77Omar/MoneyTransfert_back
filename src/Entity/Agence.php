@@ -27,7 +27,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      itemOperations={
  *     "get"={"path"="/agence/{id}"},
  *     "put"={"path"="/agence/{id}"},
- *     "delete"={"path"="/agence/{id}"},
+ *     "delete"={"path"="/agence/{id}/users/{idu}"},
  *     }
  * )
  */
@@ -53,14 +53,6 @@ class Agence
      */
     private $adresseAgence;
 
-
-    /**
-     * @ORM\OneToOne(targetEntity=Compte::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups ({"agence:read","agence:write"})
-     */
-    private $compte;
-
     /**
      * @ORM\Column(type="string", nullable=true)
      * @Groups ({"agence:read"})
@@ -75,9 +67,21 @@ class Agence
 
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="agence")
+     * @Groups ({"agence:read","agence:write"})
      * @ApiSubresource()
      */
     private $users;
+
+    /**
+     * @ORM\OneToOne(targetEntity=Compte::class, inversedBy="agence", cascade={"persist", "remove"})
+     * @Groups ({"agence:read","agence:write"})
+     */
+    private $compte;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $Archived;
 
 
     public function __construct()
@@ -111,18 +115,6 @@ class Agence
     public function setAdresseAgence(string $adresseAgence): self
     {
         $this->adresseAgence = $adresseAgence;
-
-        return $this;
-    }
-
-    public function getCompte(): ?compte
-    {
-        return $this->compte;
-    }
-
-    public function setCompte(compte $compte): self
-    {
-        $this->compte = $compte;
 
         return $this;
     }
@@ -177,6 +169,30 @@ class Agence
                 $user->setAgence(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCompte(): ?Compte
+    {
+        return $this->compte;
+    }
+
+    public function setCompte(?Compte $compte): self
+    {
+        $this->compte = $compte;
+
+        return $this;
+    }
+
+    public function getArchived(): ?bool
+    {
+        return $this->Archived;
+    }
+
+    public function setArchived(bool $Archived): self
+    {
+        $this->Archived = $Archived;
 
         return $this;
     }
