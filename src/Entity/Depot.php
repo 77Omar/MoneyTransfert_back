@@ -15,7 +15,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     normalizationContext={"groups"={"depot:read"}},
  *     attributes={
  *   "security"="is_granted('ROLE_AdminSystem')",
- *   "security_message"="Ressource accessible que par l'Admin",
+ *   "security_message"="Ressource accessible que par l'Admin Systeme",
  *  "denormalization_context"={"groups"={"depot:write"}},
  * },
  *     collectionOperations={
@@ -46,7 +46,7 @@ class Depot
     private $dateDepot;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="integer", length=255)
      * @Groups ({"depot:read","depot:write","user:read","user:read"})
      */
     private $montantDepot;
@@ -83,12 +83,12 @@ class Depot
         return $this;
     }
 
-    public function getMontantDepot(): ?string
+    public function getMontantDepot(): ?int
     {
         return $this->montantDepot;
     }
 
-    public function setMontantDepot(string $montantDepot): self
+    public function setMontantDepot(int $montantDepot): self
     {
         $this->montantDepot = $montantDepot;
 

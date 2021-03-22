@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\TransactionsRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -13,19 +16,44 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     routePrefix="/admin",
  *     normalizationContext={"groups"={"trans:read"}},
  *     attributes={
- *  "security"="is_granted('ROLE_AdminSystem')",
- * "security_message"="Ressource accessible que par l'Admin",
+ *     {"pagination_partial"=true},
+ *    "security"="is_granted('ROLE_AdminAgence')  or is_granted('ROLE_UserAgence')",
+ *   "security_message"="Ressource accessible que par l'AdminAgence et UserAgence",
  *  "denormalization_context"={"groups"={"trans:write"}},
  * },
+ *
  *     collectionOperations={
- *     "get"={"path"="/transaction"},
- *     "get"={"path"="/transaction"},
- *      "post"={"path"="/transaction/depot"},
+ *       "post"={"path"="/transaction/depot"},
+ *   "get_commis"={
+ *   "methods"="GET",
+ *   "path"="/transaction/commission/depot",
+ *   "route_name"="commis_liste",
+ *   },
+ *    "get"={
+ *   "methods"="GET",
+ *   "path"="/transaction/commission/retrait",
+ *   "route_name"="liste",
+ *   },
+ *     "get_trans"={
+ *   "methods"="GET",
+ *   "path"="/transaction/userDepot",
+ *   "route_name"="trans_liste",
+ *   },
+ *    "get_retrait"={
+ *   "methods"="GET",
+ *   "path"="/transaction/userRetrait",
+ *   "route_name"="retrait_liste",
+ *   },
+ *     "calcul"={
+ *   "methods"="GET",
+ *   "path"="/transaction/calculfrais/{type}/{montant}",
+ *   "route_name"="calcul",
+ *   },
  *     },
  *      itemOperations={
- *     "get"={"path"="/transaction/{id}/imprimer"},
- *     "put"={"path"="/transaction/{id}/depot"},
- *     "delete"={"path"="/transaction/{id}"},
+ *      "get"={"path"="/transaction/{id}/imprimer"},
+ *      "put",
+ *      "delete"={"path"="/transaction/{id}"},
  *     }
  * )
  */
@@ -41,25 +69,25 @@ class Transactions
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups ({"trans:read","trans:write"})
+     * @Groups ({"trans:read","trans:write", "client"})
      */
     private $montant;
 
     /**
      * @ORM\Column(type="date")
-     * @Groups ({"trans:read"})
+     * @Groups ({"trans:read","depot","client"})
      */
     private $date_depot;
 
     /**
      * @ORM\Column(type="date", nullable=true)
-     * @Groups ({"trans:read", "trans:write"})
+     * @Groups ({"trans:read", "trans:write","client"})
      */
     private $date_retrait;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups ({"trans:read", "trans:write"})
+     * @Groups ({"trans:read", "trans:write","depot","client"})
      */
     private $code;
 
@@ -100,22 +128,43 @@ class Transactions
     private $frais_systeme;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="transactions")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="transactionDepot")
      * @ORM\JoinColumn(nullable=false)
-     *  @Groups ({"trans:read","trans:write"})
+     * @Groups ({"trans:read"})
      */
-    private $user;
+    private $userDepot;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Compte::class, inversedBy="transactions")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="transactionRetrait")
+     * @ORM\JoinColumn(nullable=true)
+     * @Groups ({"trans:read"})
      */
-    private $compte;
+    private $userRetrait;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Clients::class, inversedBy="transaction")
+     * @ORM\ManyToOne(targetEntity=Clients::class, inversedBy="transactionDepot")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups ({"client"})
      */
-    private $clients;
+    private $clientDepot;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Clients::class, inversedBy="transactionRetrait")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups ({"client"})
+     */
+    private $clientRetrait;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Compte::class, inversedBy="transaction_depot")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $compte_depot;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Compte::class, inversedBy="transaction_retrait")
+     */
+    private $compte_retrait;
 
 
     public function getId(): ?int
@@ -243,38 +292,75 @@ class Transactions
         return $this;
     }
 
-    public function getUser(): ?User
+
+    public function getUserDepot(): ?User
     {
-        return $this->user;
+        return $this->userDepot;
     }
 
-    public function setUser(?User $user): self
+    public function setUserDepot(?User $userDepot): self
     {
-        $this->user = $user;
+        $this->userDepot = $userDepot;
 
         return $this;
     }
 
-    public function getCompte(): ?Compte
+    public function getUserRetrait(): ?User
     {
-        return $this->compte;
+        return $this->userRetrait;
     }
 
-    public function setCompte(?Compte $compte): self
+    public function setUserRetrait(?User $userRetrait): self
     {
-        $this->compte = $compte;
+        $this->userRetrait = $userRetrait;
 
         return $this;
     }
 
-    public function getClients(): ?Clients
+    public function getClientDepot(): ?Clients
     {
-        return $this->clients;
+        return $this->clientDepot;
     }
 
-    public function setClients(?Clients $clients): self
+    public function setClientDepot(?Clients $clientDepot): self
     {
-        $this->clients = $clients;
+        $this->clientDepot = $clientDepot;
+
+        return $this;
+    }
+
+    public function getClientRetrait(): ?Clients
+    {
+        return $this->clientRetrait;
+    }
+
+    public function setClientRetrait(?Clients $clientRetrait): self
+    {
+        $this->clientRetrait = $clientRetrait;
+
+        return $this;
+    }
+
+    public function getCompteDepot(): ?Compte
+    {
+        return $this->compte_depot;
+    }
+
+    public function setCompteDepot(?Compte $compte_depot): self
+    {
+        $this->compte_depot = $compte_depot;
+
+        return $this;
+    }
+
+    public function getCompteRetrait(): ?Compte
+    {
+        return $this->compte_retrait;
+    }
+
+    public function setCompteRetrait(?Compte $compte_retrait): self
+    {
+        $this->compte_retrait = $compte_retrait;
 
         return $this;
     }

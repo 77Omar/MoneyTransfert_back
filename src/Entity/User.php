@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -17,13 +18,19 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     routePrefix="/admin",
  *     normalizationContext={"groups"={"user:read"}},
  *     attributes={
- *  "security"="is_granted('ROLE_AdminSystem')",
- * "security_message"="Ressource accessible que par l'Admin",
+ *  "security"="is_granted('ROLE_AdminSystem') or is_granted('ROLE_AdminAgence')  or is_granted('ROLE_UserAgence')",
+ *  "security_message"="Ressource accessible que par l'Admin Systeme",
  *  "denormalization_context"={"groups"={"users:write"}},
  * },
  *     collectionOperations={
  *     "get"={"path"="/users"},
  *      "post"={"path"="/users"},
+ *  "get_user" = {
+ *        "method"="GET",
+ *         "path"="/users/solde_Compte",
+ *          "security"="is_granted('ROLE_AdminAgence')  or is_granted('ROLE_UserAgence')",
+ *          "security_message"="Ressource accessible que par l'AdminAgence et UserAgence",
+ *           },
  *     },
  *      itemOperations={
  *     "get"={"path"="/users/{id}"},
@@ -39,13 +46,14 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups ({"user:read","users:write","depot:read"})
+     * @Groups ({"user:read","users:write","depot:read","transaction"})
      */
     protected $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups ({"user:read","users:write","depot:read"})
+     * @Assert\NotBlank(message="Le email est obligatoire")
+     * @Groups ({"user:read","users:write","depot:read","transaction"})
      */
     protected $email;
 
@@ -55,31 +63,36 @@ class User implements UserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
-     * @Groups ({"user:read","users:write","depot:read"})
+     * @Assert\NotBlank(message="Le password est obligatoire")
+     * @Groups ({"user:read","users:write","depot:read","transaction"})
      */
     private $password;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups ({"user:read","users:write","depot:read","trans:write"})
+     * @Assert\NotBlank(message="Le prenom est obligatoire")
+     * @Groups ({"user:read","users:write","depot:read","trans:write","transaction","trans:read"})
      */
     private $prenom;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups ({"user:read","users:write","depot:read","trans:write"})
+     * @Assert\NotBlank(message="Le nom est obligatoire")
+     * @Groups ({"user:read","users:write","depot:read","trans:write","transaction","trans:read"})
      */
     private $nom;
 
     /**
      * @ORM\Column(type="string")
-     * @Groups ({"user:read","users:write","depot:read","trans:write"})
+     * @Assert\NotBlank(message="Le phone est obligatoire")
+     * @Groups ({"user:read","users:write","depot:read","trans:write","transaction"})
      */
     private $phone;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups ({"user:read","users:write","depot:read"})
+     * @Assert\NotBlank(message="L'adresse est obligatoire")
+     * @Groups ({"user:read","users:write","depot:read","transaction"})
      */
     private $adresse;
 
@@ -87,19 +100,16 @@ class User implements UserInterface
     /**
      * @ORM\ManyToOne(targetEntity=Profil::class, inversedBy="users",cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
+     * @Assert\NotBlank(message="Le profil est obligatoire")
      * @Groups ({"user:read","users:write"})
      */
     private $profil;
 
 
     /**
-     * @ORM\OneToMany(targetEntity=Transactions::class, mappedBy="true")
-     */
-    private $transactions;
-
-    /**
      * @ORM\Column(type="string")
-     * @Groups ({"user:read","users:write","depot:read","trans:write"})
+     * @Assert\NotBlank(message="Le cni est obligatoire")
+     * @Groups ({"user:read","users:write","depot:read","trans:write","transaction"})
      */
     private $cni;
 
@@ -121,11 +131,22 @@ class User implements UserInterface
      */
     private $agence;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Transactions::class, mappedBy="userDepot")
+     */
+    private $transactionDepot;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Transactions::class, mappedBy="userRetrait")
+     */
+    private $transactionRetrait;
+
 
     public function __construct()
     {
-        $this->transactions = new ArrayCollection();
         $this->depots = new ArrayCollection();
+        $this->transactionDepot = new ArrayCollection();
+        $this->transactionRetrait = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -269,36 +290,6 @@ class User implements UserInterface
         return $this;
     }
 
-    /**
-     * @return Collection|transactions[]
-     */
-    public function getTransactions(): Collection
-    {
-        return $this->transactions;
-    }
-
-    public function addTransaction(transactions $transaction): self
-    {
-        if (!$this->transactions->contains($transaction)) {
-            $this->transactions[] = $transaction;
-            $transaction->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTransaction(transactions $transaction): self
-    {
-        if ($this->transactions->removeElement($transaction)) {
-            // set the owning side to null (unless already changed)
-            if ($transaction->getUser() === $this) {
-                $transaction->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getCni(): ?int
     {
         return $this->cni;
@@ -361,6 +352,66 @@ class User implements UserInterface
     public function setAgence(?Agence $agence): self
     {
         $this->agence = $agence;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Transactions[]
+     */
+    public function getTransactionDepot(): Collection
+    {
+        return $this->transactionDepot;
+    }
+
+    public function addTransactionDepot(Transactions $transactionDepot): self
+    {
+        if (!$this->transactionDepot->contains($transactionDepot)) {
+            $this->transactionDepot[] = $transactionDepot;
+            $transactionDepot->setUserDepot($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTransactionDepot(Transactions $transactionDepot): self
+    {
+        if ($this->transactionDepot->removeElement($transactionDepot)) {
+            // set the owning side to null (unless already changed)
+            if ($transactionDepot->getUserDepot() === $this) {
+                $transactionDepot->setUserDepot(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Transactions[]
+     */
+    public function getTransactionRetrait(): Collection
+    {
+        return $this->transactionRetrait;
+    }
+
+    public function addTransactionRetrait(Transactions $transactionRetrait): self
+    {
+        if (!$this->transactionRetrait->contains($transactionRetrait)) {
+            $this->transactionRetrait[] = $transactionRetrait;
+            $transactionRetrait->setUserRetrait($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTransactionRetrait(Transactions $transactionRetrait): self
+    {
+        if ($this->transactionRetrait->removeElement($transactionRetrait)) {
+            // set the owning side to null (unless already changed)
+            if ($transactionRetrait->getUserRetrait() === $this) {
+                $transactionRetrait->setUserRetrait(null);
+            }
+        }
 
         return $this;
     }

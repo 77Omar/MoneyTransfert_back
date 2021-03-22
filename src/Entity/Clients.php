@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ClientsRepository::class)
@@ -42,33 +43,47 @@ class Clients
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups ({"client:read","client:write"})
+     * @Assert\NotBlank(message="Le nomComplet est obligatoire")
+     * @Groups ({"client:read","client:write","client"})
      */
     private $nomComplet;
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups ({"client:read","client:write"})
+     * @Assert\NotBlank(message="Le champs ne doit pas être vide.")
+     * @Assert\Regex("/^[7][0|7|8|6]([0-9]{7})$/", message="Entrez un numero de Telephone valide")
+     * @Groups ({"client:read","client:write","client"})
      */
     private $phone;
 
     /**
-     * @ORM\Column(type="integer")
-     * @Groups ({"client:read","client:write"})
+     * @ORM\Column(type="string", nullable=true)
+     * @Groups ({"client:read", "client:write","client"})
+     * @Assert\NotBlank(message="Le champs ne doit pas etre vide")
+     *      @Assert\Length(
+     *      min = 13,
+     *      minMessage = "Votre cni doit contenir au moins {{limit}} caractères",
+     *      allowEmptyString = false
+     * )
      */
     private $cni;
 
     /**
-     * @ORM\OneToMany(targetEntity=Transactions::class, mappedBy="clients")
+     * @ORM\OneToMany(targetEntity=Transactions::class, mappedBy="clientDepot")
      */
-    private $transaction;
+    private $transactionDepot;
 
-
+    /**
+     * @ORM\OneToMany(targetEntity=Transactions::class, mappedBy="clientRetrait")
+     */
+    private $transactionRetrait;
 
     public function __construct()
     {
-        $this->transaction = new ArrayCollection();
+        $this->transactionDepot = new ArrayCollection();
+        $this->transactionRetrait = new ArrayCollection();
     }
+
 
 
     public function getId(): ?int
@@ -100,12 +115,12 @@ class Clients
         return $this;
     }
 
-    public function getCni(): ?int
+    public function getCni(): ?string
     {
         return $this->cni;
     }
 
-    public function setCni(int $cni): self
+    public function setCni(string $cni): self
     {
         $this->cni = $cni;
 
@@ -115,27 +130,57 @@ class Clients
     /**
      * @return Collection|Transactions[]
      */
-    public function getTransaction(): Collection
+    public function getTransactionDepot(): Collection
     {
-        return $this->transaction;
+        return $this->transactionDepot;
     }
 
-    public function addTransaction(Transactions $transaction): self
+    public function addTransactionDepot(Transactions $transactionDepot): self
     {
-        if (!$this->transaction->contains($transaction)) {
-            $this->transaction[] = $transaction;
-            $transaction->setClients($this);
+        if (!$this->transactionDepot->contains($transactionDepot)) {
+            $this->transactionDepot[] = $transactionDepot;
+            $transactionDepot->setClientDepot($this);
         }
 
         return $this;
     }
 
-    public function removeTransaction(Transactions $transaction): self
+    public function removeTransactionDepot(Transactions $transactionDepot): self
     {
-        if ($this->transaction->removeElement($transaction)) {
+        if ($this->transactionDepot->removeElement($transactionDepot)) {
             // set the owning side to null (unless already changed)
-            if ($transaction->getClients() === $this) {
-                $transaction->setClients(null);
+            if ($transactionDepot->getClientDepot() === $this) {
+                $transactionDepot->setClientDepot(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Transactions[]
+     */
+    public function getTransactionRetrait(): Collection
+    {
+        return $this->transactionRetrait;
+    }
+
+    public function addTransactionRetrait(Transactions $transactionRetrait): self
+    {
+        if (!$this->transactionRetrait->contains($transactionRetrait)) {
+            $this->transactionRetrait[] = $transactionRetrait;
+            $transactionRetrait->setClientRetrait($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTransactionRetrait(Transactions $transactionRetrait): self
+    {
+        if ($this->transactionRetrait->removeElement($transactionRetrait)) {
+            // set the owning side to null (unless already changed)
+            if ($transactionRetrait->getClientRetrait() === $this) {
+                $transactionRetrait->setClientRetrait(null);
             }
         }
 

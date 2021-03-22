@@ -1,14 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="781ec75a-aad6-4351-b2dd-a33937f19a20" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/Repository/DoctrinePaginator.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/DepotController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/DepotController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/packages/api_platform.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/api_platform.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/Version20210301014622.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/Version20210301015908.php" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Controller/TransactionsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/TransactionsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DataPersister/AgenceDataPersister.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DataPersister/AgenceDataPersister.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/Agence.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Agence.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/UserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/UserController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/Clients.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Clients.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Entity/Compte.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Compte.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/Depot.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Depot.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/Transactions.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Transactions.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Entity/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/User.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Repository/TransactionsRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/TransactionsRepository.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -146,7 +170,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Projet-Ionic-SA" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Premier-Projet-Angular" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
@@ -183,21 +207,74 @@
       <workItem from="1614610559809" duration="617000" />
       <workItem from="1614620414125" duration="1283000" />
       <workItem from="1614638665668" duration="3103000" />
+      <workItem from="1614714253421" duration="2672000" />
+      <workItem from="1615334264036" duration="188000" />
+      <workItem from="1615386504541" duration="790000" />
+      <workItem from="1615398175199" duration="4318000" />
+      <workItem from="1615430085355" duration="685000" />
+      <workItem from="1615434653359" duration="604000" />
+      <workItem from="1615471813422" duration="35000" />
+      <workItem from="1615471867872" duration="12000" />
+      <workItem from="1615471935447" duration="23000" />
+      <workItem from="1615472296157" duration="11954000" />
+      <workItem from="1615519683777" duration="617000" />
+      <workItem from="1615554902329" duration="5001000" />
+      <workItem from="1615602840767" duration="415000" />
+      <workItem from="1615603396325" duration="19015000" />
+      <workItem from="1615697567547" duration="618000" />
+      <workItem from="1615698457248" duration="16060000" />
+      <workItem from="1615829654045" duration="2235000" />
+      <workItem from="1615912048736" duration="3985000" />
+      <workItem from="1615951209956" duration="4969000" />
+      <workItem from="1616005987656" duration="6215000" />
+      <workItem from="1616045030565" duration="12098000" />
+      <workItem from="1616104649188" duration="13258000" />
+      <workItem from="1616202246372" duration="652000" />
+      <workItem from="1616280428808" duration="15558000" />
+      <workItem from="1616348963790" duration="7956000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
   <component name="WindowStateProjectService">
-    <state x="663" y="254" width="655" height="605" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog" timestamp="1614602042159">
+    <state x="616" y="340" width="750" height="434" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1615567316309">
       <screen x="72" y="27" width="1848" height="1053" />
     </state>
-    <state x="663" y="254" width="655" height="605" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog/72.27.1848.1053@72.27.1848.1053" timestamp="1614602042159" />
-    <state x="726" y="254" width="530" height="605" key="FileChooserDialogImpl" timestamp="1614644795912">
+    <state x="616" y="340" width="750" height="434" key="#com.intellij.fileTypes.FileTypeChooser/72.27.1848.1053@72.27.1848.1053" timestamp="1615567316309" />
+    <state x="663" y="254" width="655" height="605" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog" timestamp="1616294718019">
       <screen x="72" y="27" width="1848" height="1053" />
     </state>
-    <state x="726" y="254" width="530" height="605" key="FileChooserDialogImpl/72.27.1848.1053@72.27.1848.1053" timestamp="1614644795912" />
+    <state x="663" y="254" width="655" height="605" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog/72.27.1848.1053@72.27.1848.1053" timestamp="1616294718019" />
+    <state x="726" y="254" width="530" height="605" key="FileChooserDialogImpl" timestamp="1616439950896">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="726" y="254" width="530" height="605" key="FileChooserDialogImpl/72.27.1848.1053@72.27.1848.1053" timestamp="1616439950896" />
+    <state x="1175" y="224" width="709" height="665" key="NewPhpClassDialog" timestamp="1616094790138">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="1175" y="224" width="709" height="665" key="NewPhpClassDialog/72.27.1848.1053@72.27.1848.1053" timestamp="1616094790138" />
+    <state x="172" y="127" width="1648" height="853" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog" timestamp="1615567626067">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="172" y="127" width="1648" height="853" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog/72.27.1848.1053@72.27.1848.1053" timestamp="1615567626067" />
+    <state x="699" y="441" width="594" height="232" key="vcs.readOnlyHandler.ReadOnlyStatusDialog" timestamp="1615567534831">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="699" y="441" width="594" height="232" key="vcs.readOnlyHandler.ReadOnlyStatusDialog/72.27.1848.1053@72.27.1848.1053" timestamp="1615567534831" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -208,8 +285,8 @@
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
-          <url>file://$PROJECT_DIR$/src/Controller/TransactionsController.php</url>
-          <line>54</line>
+          <url>file://$PROJECT_DIR$/src/Repository/TransactionsRepository.php</url>
+          <line>21</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>

@@ -50,7 +50,7 @@ class Compte
 
     /**
      * @Assert\GreaterThan(700000),
-     * message="la valeur est initialisé à 700mille ou plus "
+     * message="la valeur est initialisé à 700000 ou plus "
      * @ORM\Column(type="integer")
      * @Groups ({"compte:read","compte:write","agence:read","agence:write"})
      */
@@ -62,10 +62,6 @@ class Compte
      */
     private $date_creation;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Transactions::class, mappedBy="compte")
-     */
-    private $transactions;
 
     /**
      * @ORM\OneToMany(targetEntity=Depot::class, mappedBy="compte")
@@ -82,11 +78,22 @@ class Compte
      */
     private $agence;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Transactions::class, mappedBy="compte_depot")
+     */
+    private $transaction_depot;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Transactions::class, mappedBy="compte_retrait")
+     */
+    private $transaction_retrait;
+
     public function __construct()
     {
-        $this->transactions = new ArrayCollection();
         $this->depots = new ArrayCollection();
         $this->date_creation = new \DateTime('now');
+        $this->transaction_depot = new ArrayCollection();
+        $this->transaction_retrait = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -130,35 +137,6 @@ class Compte
         return $this;
     }
 
-    /**
-     * @return Collection|transactions[]
-     */
-    public function getTransactions(): Collection
-    {
-        return $this->transactions;
-    }
-
-    public function addTransaction(transactions $transaction): self
-    {
-        if (!$this->transactions->contains($transaction)) {
-            $this->transactions[] = $transaction;
-            $transaction->setCompte($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTransaction(transactions $transaction): self
-    {
-        if ($this->transactions->removeElement($transaction)) {
-            // set the owning side to null (unless already changed)
-            if ($transaction->getCompte() === $this) {
-                $transaction->setCompte(null);
-            }
-        }
-
-        return $this;
-    }
 
     /**
      * @return Collection|Depot[]
@@ -219,6 +197,66 @@ class Compte
         }
 
         $this->agence = $agence;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Transactions[]
+     */
+    public function getTransactionDepot(): Collection
+    {
+        return $this->transaction_depot;
+    }
+
+    public function addTransactionDepot(Transactions $transactionDepot): self
+    {
+        if (!$this->transaction_depot->contains($transactionDepot)) {
+            $this->transaction_depot[] = $transactionDepot;
+            $transactionDepot->setCompteDepot($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTransactionDepot(Transactions $transactionDepot): self
+    {
+        if ($this->transaction_depot->removeElement($transactionDepot)) {
+            // set the owning side to null (unless already changed)
+            if ($transactionDepot->getCompteDepot() === $this) {
+                $transactionDepot->setCompteDepot(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Transactions[]
+     */
+    public function getTransactionRetrait(): Collection
+    {
+        return $this->transaction_retrait;
+    }
+
+    public function addTransactionRetrait(Transactions $transactionRetrait): self
+    {
+        if (!$this->transaction_retrait->contains($transactionRetrait)) {
+            $this->transaction_retrait[] = $transactionRetrait;
+            $transactionRetrait->setCompteRetrait($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTransactionRetrait(Transactions $transactionRetrait): self
+    {
+        if ($this->transaction_retrait->removeElement($transactionRetrait)) {
+            // set the owning side to null (unless already changed)
+            if ($transactionRetrait->getCompteRetrait() === $this) {
+                $transactionRetrait->setCompteRetrait(null);
+            }
+        }
 
         return $this;
     }
